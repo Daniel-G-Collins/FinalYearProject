@@ -1,14 +1,23 @@
 from particle import particle
+from dParticle import dParticle
 import numpy as np
 
 class swarm:
-    def __init__(self, domainFunc, selected_domain, numParticles):
+    def __init__(self, domainFunc, selected_domain, numParticles, numIterations, pType):
+        self.numIterations = numIterations
         self.evalPosition = domainFunc
         self.selected_domain = selected_domain
-        self.particles = [particle(self.evalPosition, self.selected_domain) for i in range(numParticles)]
+        self.pType = pType
+        match pType:
+            case "StandardWithDampening":
+                self.particles = [dParticle(self.evalPosition, self.selected_domain, numIterations) for i in range(numParticles)]
+            case "Standard":
+                self.particles = [particle(self.evalPosition, self.selected_domain) for i in range(numParticles)]
+       
         bestParticle = sorted(self.particles, key=lambda x: x.bestValue, reverse=False)[0]
         self.globalBestX = bestParticle.xpos
         self.globalBestY = bestParticle.ypos
+        
         #print(f"Global Best: {self.globalBest.xpos}, {self.globalBest.ypos}, {self.globalBest.value}")
         for p in self.particles:
             p.setGlobalBest(self.globalBestX, self.globalBestY) 

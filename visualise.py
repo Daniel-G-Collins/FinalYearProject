@@ -9,9 +9,13 @@ import matplotlib.colors as colors
 
 # handle passed domain
 if len(sys.argv) > 1:
+    #####
+    numIterations = 100
+    ####
     selected_domain = sys.argv[1]
+    pType = sys.argv[2].replace(" ", "")
     print(f"Received domain: {selected_domain}")
-    domain_dict = searchDomain.calc_dict(sys.argv[2:])
+    domain_dict = searchDomain.calc_dict(sys.argv[3:])
     bounds = Bounds()
     functionBounds = bounds.getBounds(selected_domain)
     if selected_domain in domain_dict:
@@ -39,28 +43,34 @@ if len(sys.argv) > 1:
         ax.set_ylabel('Y Axis')
         ax.set_title(f'{selected_domain} Search Domain Visualization')
         #ax.set_zlim(-0.0002, 0.0001)
-
-        swarm = swarm(domain_dict[selected_domain], selected_domain, numParticles=500)
+        
+        swarm = swarm(domain_dict[selected_domain], selected_domain, numParticles=500, numIterations=numIterations, pType="StandardWithDampening")
         scat = ax.scatter(
             [p.xpos for p in swarm.particles],
             [p.ypos for p in swarm.particles],
             [p.value for p in swarm.particles],
             color='orange', s=20, marker='o', edgecolor='purple'
         )
+
+        currentIteration = [0] 
+
         def update(frame):
-            swarm.updateSwarm()  # Update swarm position based on velocity and best position
-            
+            #nonlocal currentIteration
+            if currentIteration[0] < numIterations:
+                swarm.updateSwarm()  # Update swarm position based on velocity and best position
+                currentIteration[0] += 1
+            else:
+                ani.event_source.stop()
             new_positions = np.array([[p.xpos, p.ypos] for p in swarm.particles])
             scat.set_offsets(new_positions)  # Update X and Y positions
             scat.set_3d_properties([p.value for p in swarm.particles], zdir='z')  # Update Z positions
 
             return scat
 
-        # 🔄 Create animation
-        ani = FuncAnimation(fig, update, frames=100, interval=1000, blit=False)
+        ani = FuncAnimation(fig, update, frames=numIterations, interval=1000, blit=False, repeat=False)
         fig.colorbar(surf)
-        # 🎬 Show the animation
         plt.show()
+        
     else:
         print(f"Error: Domain '{selected_domain}' not found in the dictionary.")
 else:

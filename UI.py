@@ -4,12 +4,14 @@ import subprocess
 
 # Function to handle button click
 def on_select(option):
+    ###
     global combo
     global search_domains
     label.destroy()
     global standardPSO
     standardPSO = "1"
-
+    global combo_domain, combo_particle_type
+    ###
     search_domains = [
         "Sphere",
         "Rosenbrock",
@@ -46,29 +48,49 @@ def on_select(option):
 
     # if visualise search domain is selected
     if option == 0:
-        funcSelect = tk.Label(root, text="Choose a Search Domain:", font=("Arial", 12))
-        funcSelect.pack(pady=10)
+        swarmTypes = ["Standard", "Standard With Dampening Factor"]
 
-        combo = ttk.Combobox(root, values=search_domains)
-        combo.pack(pady=10)
-        combo.bind("<<ComboboxSelected>>", pass_domain)
+        # Label for search domain
+        label_domain = tk.Label(root, text="Choose a Search Domain:", font=("Arial", 12))
+        label_domain.pack(pady=10)
+
+        # Combobox for search domain
+        combo_domain = ttk.Combobox(root, values=search_domains)
+        combo_domain.pack(pady=10)
+
+        # Label for particle type
+        label_particle_type = tk.Label(root, text="Choose a Swarm Type:", font=("Arial", 12))
+        label_particle_type.pack(pady=10)
+
+        # Combobox for particle type
+        combo_particle_type = ttk.Combobox(root, values=swarmTypes)
+        combo_particle_type.current(0)  # Set default selection to "Standard PSO"
+        combo_particle_type.pack(pady=10)
+
+        # Submit button
+        submit_button = tk.Button(root, text="Submit", command=pass_domain, width=20)
+        submit_button.pack(pady=20)
     else:
         subprocess.run(["python", "evaluate.py"] + search_domains)  # Run script_b.py
 
 # passes selected domain to visualise to searchDomain.py
-def pass_domain(event):
-    selected_value = combo.get()
-    subprocess.run(["python", "visualise.py", selected_value] + search_domains)
-    #print(f"Selected: {selected_value}")
+def pass_domain():
+    selected_value = combo_domain.get()
+    selected_particle_type = combo_particle_type.get()
+    subprocess.run(["python", "visualise.py", selected_value, selected_particle_type] + search_domains)
+    print(f"Selected: {selected_value}\nParticle Type: {selected_particle_type}")
 
 # Create main window
 root = tk.Tk()
 root.title("Select an Option")
-root.geometry("500x300")
+root.geometry("500x500")
 
 # Label
 label = tk.Label(root, text="Choose an option:", font=("Arial", 12))
 label.pack(pady=10)
+
+swarm_label = tk.Label(root, text="Choose a Swarm Type:", font=("Arial", 12))
+swarm_label.pack(pady=10)
 
 # Buttons for options
 btn1 = tk.Button(root, text="Visualise Standard PSO", command=lambda: on_select(0), width=25)
