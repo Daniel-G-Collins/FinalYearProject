@@ -21,20 +21,19 @@ if len(sys.argv) > 1:
     if selected_domain in domain_dict:
         print(f"Plotting {selected_domain} function.")
         
-        # 🔹 Define the Search Domain Boundaries
+
         x_min, x_max = functionBounds[0], functionBounds[1]
         y_min, y_max = functionBounds[2], functionBounds[3]
 
-        # 🔹 Create a Grid of Points in the Search Space
-        x = np.linspace(x_min, x_max, 1000)  # 100 points in X direction
-        y = np.linspace(y_min, y_max, 1000)  # 100 points in Y direction
+
+        x = np.linspace(x_min, x_max, 1000) 
+        y = np.linspace(y_min, y_max, 1000)
         X, Y = np.meshgrid(x, y)
 
         
         # Default case for most domain functions
         Z = np.vectorize(domain_dict[selected_domain])(X, Y)
 
-        # 🔹 Plot the Search Domain
         fig = plt.figure(figsize=(10, 6))
         ax = fig.add_subplot(111, projection='3d')  
         surf = ax.plot_surface(X, Y, Z, cmap="viridis", edgecolor='none', alpha=0.7)
