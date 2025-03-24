@@ -43,8 +43,10 @@ if len(sys.argv) > 1:
         ax.set_ylabel('Y Axis')
         ax.set_title(f'{selected_domain} Search Domain Visualization')
         #ax.set_zlim(-0.0002, 0.0001)
+
+        print(f"ptype:{pType}")
         
-        swarm = swarm(domain_dict[selected_domain], selected_domain, numParticles=500, numIterations=numIterations, pType="StandardWithDampening")
+        swarm = swarm(domain_dict[selected_domain], selected_domain, numParticles=500, numIterations=numIterations, pType=pType)
         scat = ax.scatter(
             [p.xpos for p in swarm.particles],
             [p.ypos for p in swarm.particles],

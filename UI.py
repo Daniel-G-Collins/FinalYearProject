@@ -10,7 +10,17 @@ def on_select(option):
     label.destroy()
     global standardPSO
     standardPSO = "1"
-    global combo_domain, combo_particle_type
+    global label_domain, combo_domain, label_particle_type, combo_particle_type, submit_button
+    if label_domain is not None:
+            label_domain.destroy()
+    if combo_domain is not None:
+        combo_domain.destroy()
+    if label_particle_type is not None:
+        label_particle_type.destroy()
+    if combo_particle_type is not None:
+        combo_particle_type.destroy()
+    if submit_button is not None:
+        submit_button.destroy()
     ###
     search_domains = [
         "Sphere",
@@ -98,6 +108,12 @@ btn1.pack(pady=5)
 
 btn2 = tk.Button(root, text="Run Standard PSO on all Search Domains", command=lambda: on_select(1), width=40)
 btn2.pack(pady=5)
+
+label_domain = None
+combo_domain = None
+label_particle_type = None
+combo_particle_type = None
+submit_button = None
 
 # Run the UI
 root.mainloop()

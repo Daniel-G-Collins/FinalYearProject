@@ -59,8 +59,14 @@ class particle:
 
     def updateVelocity(self, globalBestX, globalBestY):
         #new Vel = interia * old vel + c1 * rand() * (pbest - current) + c2 * rand() * (gbest - current)
-        self.xv = 0.2 * self.xv + 2 * uniform(0,1) * (self.bestX - self.xpos) + 2 * uniform(0,1) * (globalBestX - self.xpos)
-        self.yv = 0.2 * self.yv + 2 * uniform(0,1) * (self.bestY - self.ypos) + 2 * uniform(0,1) * (globalBestY - self.ypos)
+        r1 = uniform(0,1)
+        r2 = uniform(0,1)
+        inertia = 0.2
+        c1 = 2
+        c2 = 2
+
+        self.xv = inertia * self.xv + c1 * r1 * (self.bestX - self.xpos) + c2 * r2 * (globalBestX - self.xpos)
+        self.yv = inertia * self.yv + c1 * r1 * (self.bestY - self.ypos) + c2 * r2 * (globalBestY - self.ypos)
         #print(f"gbesyt: {globalBest}")
         return self.xv, self.yv
 

@@ -9,9 +9,15 @@ class dParticle(particle):
         self.numIterations = numIterations
 
     def updateVelocity(self, globalBestX, globalBestY):
+        #interia calculated using Clerc and Kennedy formula (2002)
+        constrictionFactor = 0.72984
+        c1 = 2.05
+        c2 = 2.05
+        r1 = uniform(0,1)
+        r2 = uniform(0,1)
         #new Vel = interia * old vel + c1 * rand() * (pbest - current) + c2 * rand() * (gbest - current)
-        self.xv = (0.2 * self.xv + 2 * uniform(0,1) * (self.bestX - self.xpos) + 2 * uniform(0,1) * (globalBestX - self.xpos)) * (1 - self.iteration/self.numIterations)
-        self.yv = (0.2 * self.yv + 2 * uniform(0,1) * (self.bestY - self.ypos) + 2 * uniform(0,1) * (globalBestY - self.ypos)) * (1 - self.iteration/self.numIterations)
+        self.xv = (constrictionFactor * self.xv + c1 * r1 * (self.bestX - self.xpos) + c2 * r2 * (globalBestX - self.xpos)) * (1 - self.iteration/self.numIterations)
+        self.yv = (constrictionFactor * self.yv + c1 * r1 * (self.bestY - self.ypos) + c2 * r2 * (globalBestY - self.ypos)) * (1 - self.iteration/self.numIterations)
         #print(f"gbesyt: {globalBest}")
 
         self.iteration += 1

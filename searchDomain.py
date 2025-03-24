@@ -27,12 +27,11 @@ def calc_dict(search_domains):
     #El-Attar-Vidyasagar-Dutta Function                        100             49              1
     domain_dict["El-Attar-Vidyasagar-Dutta"] = lambda x, y: (x**2 + y - 10)**2 + (x + y**2 - 7)**2 + (x**2 + y**3 - 1)**2    
     #Weierstrass
-    a, b, k_max = 0.5, 3, 20
-    domain_dict["Weierstrass"] = lambda x, y: sum(
-        a**k * np.cos(2 * np.pi * b**k * (x + 0.5)) + 
-        a**k * np.cos(2 * np.pi * b**k * (y + 0.5)) 
-        for k in range(k_max + 1)
-    ) - 2 * sum(a**k * np.cos(2 * np.pi * b**k * 0.5) for k in range(k_max + 1))
+    domain_dict["Weierstrass"] = lambda x, y, N=10: sum(
+    .5**n * (np.cos(3**n * np.pi * (x * np.cos(np.pi/4) + y * np.sin(np.pi/4))) +
+             np.cos(3**n * np.pi * (y * np.cos(np.pi/4) - x * np.sin(np.pi/4))))
+    for n in range(N)
+    )
     #Shifted Rotated Griewank (without bounds)
     domain_dict["Shifted Rotated Griewank"] = lambda x, y: ((x**2) + (y**2)) / 4000 - np.cos((x-4)*np.cos(np.pi/4)-(y-4)*np.sin(np.pi/4)) * np.cos(((x-4)*np.sin(np.pi/4)+(y-4)*np.cos(np.pi/4)) / np.sqrt(2)) + 1    
     #Shifted Rotated Ackley ----- optimum on bounds already?
@@ -80,4 +79,5 @@ def calc_dict(search_domains):
     domain_dict["Schwefel 2.21"] = lambda x, y: np.max(np.abs([x, y]))
     #print(f"{domain_dict["f23"](0,0)}")
     #print(f"{domain_dict["Griewank"](0,0)}")
+    #print(domain_dict["Weierstrass"](0,0))
     return domain_dict
