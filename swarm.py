@@ -32,65 +32,93 @@ class swarm:
         return particle.getValue(x, y)
 
     def getResults(self):
-        #mean and standard deviation
-        mean = sum([p.value for p in self.particles]) / len(self.particles)
-        std = (sum([(p.value - mean)**2 for p in self.particles]) / len(self.particles))**0.5
-        globalMean = sum([p.bestValue for p in self.particles]) / len(self.particles)
-        globalStd = (sum([(p.bestValue - globalMean)**2 for p in self.particles]) / len(self.particles))**0.5
+        # Prepare lists to store values
+        final_values = []
+        personal_best_values = []
         
-        #ring topology mean and std
-        pbValues = np.array([p.bestValue for p in self.particles], dtype=np.float64)
-        #print(pbValues[10])
-        ringBestVals = np.array([],dtype=np.float64)
+        # Collect final position values
+        for particle in self.particles:
+            final_value = particle.value  # Changed from evalPosition to value
+            final_values.append(final_value)
+        
+        # Collect personal best values
+        personal_best_values = [p.bestValue for p in self.particles]  # Matches bestValue in particle class
+        
+        # Calculate statistics for final positions
+        final_mean = np.mean(final_values)
+        final_std = np.std(final_values)
+        # Calculate statistics for personal best positions
+        pb_mean = np.mean(personal_best_values)
+        pb_std = np.std(personal_best_values)
+        
+        # Ring topology calculations (final positions)
+        ring_final_vals = np.array([],dtype=np.float64)
         for i in range(len(self.particles)):
             leftNeighbor = i-1
             rightNeighbor = (i+1)%len(self.particles)
-            #print(pbValues[leftNeighbor])
-            ringNeighbourBest = min([pbValues[leftNeighbor], pbValues[i], pbValues[rightNeighbor]])
-            if self.selected_domain == "Weierstrass" and self.pType == "Standard":
-                print(f"ring neighbour best swarm.py{ringNeighbourBest}")
-            ringBestVals = np.append(ringBestVals, ringNeighbourBest)
-            #print(meanVals[i])
-        #print(meanVals)
-        #print(pbValues)
-        ringMean = np.mean(ringBestVals)
-        ringStd = np.std(ringBestVals)
-        if self.selected_domain == "Weierstrass" and self.pType == "Standard":
-            print(f" >0ringMean???{ringMean}")
-            #print(f" >0???{sum([p.bestValue for p in self.particles])/1024}")
-
-        #Von Neumann (Latice) topology mean and std
-        n = np.sqrt(len(self.particles))
-        n = int(n)
-        pbValsLatice = pbValues.reshape(n,n)
-        VNBestVals = np.array([],dtype=np.float64)
+            ringNeighbourBest = min([final_values[leftNeighbor], final_values[i], final_values[rightNeighbor]])
+            ring_final_vals = np.append(ring_final_vals, ringNeighbourBest)
+        ring_final_mean = np.mean(ring_final_vals)
+        ring_final_std = np.std(ring_final_vals)
+        
+        # Ring topology calculations (personal best)
+        ring_pb_vals = np.array([],dtype=np.float64)
+        for i in range(len(self.particles)):
+            leftNeighbor = i-1
+            rightNeighbor = (i+1)%len(self.particles)
+            ringNeighbourBest = min([personal_best_values[leftNeighbor], personal_best_values[i], personal_best_values[rightNeighbor]])
+            ring_pb_vals = np.append(ring_pb_vals, ringNeighbourBest)
+        ring_pb_mean = np.mean(ring_pb_vals)
+        ring_pb_std = np.std(ring_pb_vals)
+        
+        # Von Neumann topology calculations (final positions)
+        n = int(np.sqrt(len(self.particles)))
+        final_vals_lattice = np.array(final_values).reshape(n,n)
+        VN_final_vals = np.array([],dtype=np.float64)
         for i in range(n):
             for j in range(n):
-                leftNeighbor = i-1 % n
-                rightNeighbor = (i+1)%n
-                topNeighbor = j-1 % n
-                bottomNeighbor = (j+1)%n
+                leftNeighbor = (i-1) % n
+                rightNeighbor = (i+1) % n
+                topNeighbor = (j-1) % n
+                bottomNeighbor = (j+1) % n
                 
-                center_val = pbValsLatice[i,j]
-                left_val = pbValsLatice[leftNeighbor,j]
-                right_val = pbValsLatice[rightNeighbor,j]
-                top_val = pbValsLatice[i,topNeighbor]
-                bottom_val = pbValsLatice[i,bottomNeighbor]
+                center_val = final_vals_lattice[i,j]
+                left_val = final_vals_lattice[leftNeighbor,j]
+                right_val = final_vals_lattice[rightNeighbor,j]
+                top_val = final_vals_lattice[i,topNeighbor]
+                bottom_val = final_vals_lattice[i,bottomNeighbor]
                 
-                
-            
                 laticeNeighbourBest = min([left_val, right_val, center_val, top_val, bottom_val])
-                if self.selected_domain == "Weierstrass" and self.pType == "Standard":
-                    print(f"VN neighborhood at [{i},{j}]: C:{center_val:.6f}, L:{left_val:.6f}, R:{right_val:.6f}, T:{top_val:.6f}, B:{bottom_val:.6f}")
-                    print(f"best min: {laticeNeighbourBest}")
-                
-                VNBestVals = np.append(VNBestVals, laticeNeighbourBest)
-
+                VN_final_vals = np.append(VN_final_vals, laticeNeighbourBest)
+        VN_final_mean = np.mean(VN_final_vals)
+        VN_final_std = np.std(VN_final_vals)
         
-        VNMean = np.mean(VNBestVals)
-        VNStd = np.std(VNBestVals)
-        #if self.selected_domain == "Weierstrass" and self.pType == "StandardWithDampeningFactor":
-         #           print(f"mean and std: {VNMean}, {VNStd} and then number of particles: {len(VNBestVals)}")
-          #          for p in VNBestVals:
-           #             print(f"p: {p}")
-        return mean, std, globalMean, globalStd, ringMean, ringStd, VNMean, VNStd
+        # Von Neumann topology calculations (personal best)
+        pb_vals_lattice = np.array(personal_best_values).reshape(n,n)
+        VN_pb_vals = np.array([],dtype=np.float64)
+        for i in range(n):
+            for j in range(n):
+                leftNeighbor = (i-1) % n
+                rightNeighbor = (i+1) % n
+                topNeighbor = (j-1) % n
+                bottomNeighbor = (j+1) % n
+                
+                center_val = pb_vals_lattice[i,j]
+                left_val = pb_vals_lattice[leftNeighbor,j]
+                right_val = pb_vals_lattice[rightNeighbor,j]
+                top_val = pb_vals_lattice[i,topNeighbor]
+                bottom_val = pb_vals_lattice[i,bottomNeighbor]
+                
+                laticeNeighbourBest = min([left_val, right_val, center_val, top_val, bottom_val])
+                VN_pb_vals = np.append(VN_pb_vals, laticeNeighbourBest)
+        VN_pb_mean = np.mean(VN_pb_vals)
+        VN_pb_std = np.std(VN_pb_vals)
+        
+        # Return the original values 
+        return (final_mean, final_std, 
+            pb_mean, pb_std, 
+            ring_final_mean, ring_final_std, 
+            ring_pb_mean, ring_pb_std, 
+            VN_final_mean, VN_final_std, 
+            VN_pb_mean, VN_pb_std
+            )
