@@ -13,7 +13,8 @@ if len(sys.argv) > 1:
     numIterations = 100
     ####
     selected_domain = sys.argv[1]
-    pType = sys.argv[2].replace(" ", "")
+    topology = sys.argv[2].replace(" ", "")
+    pType = sys.argv[3].replace(" ", "")
     print(f"Received domain: {selected_domain}")
     domain_dict = searchDomain.calc_dict(sys.argv[3:])
     bounds = Bounds()
@@ -44,8 +45,8 @@ if len(sys.argv) > 1:
         #ax.set_zlim(-0.0002, 0.0001)
 
         print(f"ptype:{pType}")
-        
-        swarm = swarm(domain_dict[selected_domain], selected_domain, numParticles=500, numIterations=numIterations, pType=pType)
+        #numParticles must be a perfect square for VN topology !!!!!!!!!!!!!!!!!!!!!!!!
+        swarm = swarm(domain_dict[selected_domain], selected_domain, topology, numParticles=100, numIterations=numIterations, pType=pType)
         scat = ax.scatter(
             [p.xpos for p in swarm.particles],
             [p.ypos for p in swarm.particles],
@@ -58,7 +59,7 @@ if len(sys.argv) > 1:
         def update(frame):
             #nonlocal currentIteration
             if currentIteration[0] < numIterations:
-                swarm.updateSwarm()  # Update swarm position based on velocity and best position
+                swarm.updateSwarm(topology)  # Update swarm position based on velocity and best position
                 currentIteration[0] += 1
             else:
                 ani.event_source.stop()

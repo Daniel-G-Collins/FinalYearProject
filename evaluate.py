@@ -8,60 +8,51 @@ import pandas as pd
 def evaluate(domains, domainDict):
     #allResults = []
     types = "Standard" , "StandardWithDampeningFactor"
+    topologies = "Global", "Ring", "VN"
     for type in types:
-        # Prepare a list to collect results from all functions
         allResults = []
-        
         for searchDomain in domains:
-            # Prepare results dictionary for this specific function
-            results = {
-                "Function": searchDomain,
-                "PSO Final Mean": None,
-                "PSO Final Std": None,
-                "PSO PB Mean": None,
-                "PSO PB Std": None,
-                "Ring Final Mean": None,
-                "Ring Final Std": None,
-                "Ring PB Mean": None,
-                "Ring PB Std": None,
-                "VN Final Mean": None,
-                "VN Final Std": None,
-                "VN PB Mean": None,
-                "VN PB Std": None
-            }
-            
-            # Setup and run PSO
-            numIterations = 100
-            bounds = Bounds()
-            
-            s = swarm(domainDict[searchDomain], searchDomain, numParticles=400, numIterations=numIterations, pType=type)
-            
-            # Run iterations
-            for _ in range(numIterations):
-                s.updateSwarm()
-            
-            # Get results
-            final_mean, final_std, pb_mean, pb_std,ring_final_mean, ring_final_std, ring_pb_mean, ring_pb_std,VN_final_mean, VN_final_std, VN_pb_mean, VN_pb_std = s.getResults()
-            
-            # Populate results
-            results["PSO Final Mean"] = final_mean
-            results["PSO Final Std"] = final_std
-            results["PSO PB Mean"] = pb_mean
-            results["PSO PB Std"] = pb_std
-            results["Ring Final Mean"] = ring_final_mean
-            results["Ring Final Std"] = ring_final_std
-            results["Ring PB Mean"] = ring_pb_mean
-            results["Ring PB Std"] = ring_pb_std
-            results["VN Final Mean"] = VN_final_mean
-            results["VN Final Std"] = VN_final_std
-            results["VN PB Mean"] = VN_pb_mean
-            results["VN PB Std"] = VN_pb_std
-            
-            # Append to overall results
-            allResults.append(results)
+                results = {
+                    "Function": searchDomain,
+                    "Global Final Mean": None,
+                    "Global Final Std": None,
+                    "Global PB Mean": None,
+                    "Global PB Std": None,
+                    "Ring Final Mean": None,
+                    "Ring Final Std": None,
+                    "Ring PB Mean": None,
+                    "Ring PB Std": None,
+                    "VN Final Mean": None,
+                    "VN Final Std": None,
+                    "VN PB Mean": None,
+                    "VN PB Std": None
+                }
+                for topology in topologies:                
+                #Setup
+                    numIterations = 100
+                #bounds = Bounds()
+                    
+                    s = swarm(domainDict[searchDomain], searchDomain, topology, numParticles=100, numIterations=numIterations, pType=type)
+                    
+                    #run simulation
+                    for _ in range(numIterations):
+                        s.updateSwarm(topology)
+                    
+                    #get results
+                    final_mean, final_std, pb_mean, pb_std = s.getResults(topology)
+                    
+                    #add results
+                    results[f"{topology} Final Mean"] = final_mean
+                    results[f"{topology} Final Std"] = final_std
+                    results[f"{topology} PB Mean"] = pb_mean
+                    results[f"{topology} PB Std"] = pb_std
+                    
+                #append results
+                allResults.append(results)
 
+        #csv file based on particle type
         df = pd.DataFrame(allResults)
-        filename = f"{type}Results.csv"  # File name based on particle type
+        filename = f"{type}Results.csv"
         df.to_csv(filename, index=False)
         print(f"Results saved to {filename} for \"{type}\" particles")
     print("Open the files in Excel")
