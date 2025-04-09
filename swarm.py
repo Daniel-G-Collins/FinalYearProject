@@ -32,10 +32,10 @@ class swarm:
         self.globalBestY = bestParticle.bestY
         self.globalBest = bestParticle.bestValue
         
-        # For each particle, find its neighborhood best according to topology
+        #For each particle, find its neighborhood best according to topology
         for i, particle in enumerate(self.particles):
             if topology == "Global":
-                # Standard PSO - use global best
+                #Standard PSO - use global best
                 nbest_x, nbest_y = self.globalBestX, self.globalBestY
             elif topology == "Ring":
                 # Ring topology
