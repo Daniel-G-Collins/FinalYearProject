@@ -9,7 +9,7 @@ class Particle:
         self.ymin = functionBounds[2]
         self.ymax = functionBounds[3]
         
-        # Initial position within bounds
+        #Initial position
         self.position = np.array([
             uniform(self.xmin, self.xmax),
             uniform(self.ymin, self.ymax)
@@ -22,8 +22,8 @@ class Particle:
         ])
         
         self.vmax = np.array([
-            (self.xmax - self.xmin) * 0.2,  # e.g., 20% of world width
-            (self.ymax - self.ymin) * 0.2   # e.g., 20% of world height
+            (self.xmax - self.xmin) * 0.2,
+            (self.ymax - self.ymin) * 0.2
         ])
         # Best positions
         self.personal_best_position = self.position.copy()
@@ -42,16 +42,16 @@ class Particle:
         r1 = np.random.rand(1)
         r2 = np.random.rand(1)
         
-        # Cognitive component (personal best influence)
+        #cognitive
         cognitive = c1 * r1 * (self.personal_best_position - self.position)
         
-        # Social component (neighborhood best influence)
+        #social
         social = c2 * r2 * (neighborhood_best - self.position)
         
-        # Update velocity (inertia*v + cognitive + social)
+        #velocity -> inertia*vel + cognitive + social
         self.velocity = (w * self.velocity + cognitive + social)
         
-        # Clip the velocity
+        #clip to max 
         self.velocity = np.clip(self.velocity, -self.vmax, self.vmax)
         
         # New position
