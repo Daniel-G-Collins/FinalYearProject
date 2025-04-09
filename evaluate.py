@@ -1,67 +1,64 @@
-import sys
-import searchDomain
-import os
-import pandas as pd
-import numpy as np
-from bounds import Bounds
 from swarm import Swarm
+import searchDomain
+from bounds import Bounds
+import sys
+import pandas as pd
+
 
 def evaluate(domains, domainDict):
-    all_results = []
-    
+    #allResults = []
+    topologies = "Global", "Ring", "VN"
+
+    allResults = []
     for searchDomain in domains:
-        #results dictionary
-        results = {
-            "Function": searchDomain,
-            "PSO Final Mean": None,
-            "PSO Final Std": None,
-            "PSO PB Mean": None,
-            "PSO PB Std": None,
-            "Ring Final Mean": None,
-            "Ring Final Std": None,
-            "Ring PB Mean": None,
-            "Ring PB Std": None,
-            "VN Final Mean": None,
-            "VN Final Std": None,
-            "VN PB Mean": None,
-            "VN PB Std": None
-        }
-        
-        #Setup and run PSO
-        numIterations = 100
-        bounds = Bounds()
-        functionBounds = bounds.getBounds(searchDomain)
-        s = Swarm(domainDict[searchDomain], functionBounds, 2, num_particles=400, max_iter=numIterations)
-        
-        # Run iterations
-        for _ in range(numIterations):
-            s.updateSwarm()
-        
-        #results
-        final_mean, final_std, pb_mean, pb_std,ring_final_mean, ring_final_std, ring_pb_mean, ring_pb_std,VN_final_mean, VN_final_std, VN_pb_mean, VN_pb_std = s.getResults()
-        
-        #populate dictioonary
-        results["PSO Final Mean"] = final_mean
-        results["PSO Final Std"] = final_std
-        results["PSO PB Mean"] = pb_mean
-        results["PSO PB Std"] = pb_std
-        results["Ring Final Mean"] = ring_final_mean
-        results["Ring Final Std"] = ring_final_std
-        results["Ring PB Mean"] = ring_pb_mean
-        results["Ring PB Std"] = ring_pb_std
-        results["VN Final Mean"] = VN_final_mean
-        results["VN Final Std"] = VN_final_std
-        results["VN PB Mean"] = VN_pb_mean
-        results["VN PB Std"] = VN_pb_std
+            results = {
+                "Function": searchDomain,
+                "Global Final Mean": None,
+                "Global Final Std": None,
+                "Global PB Mean": None,
+                "Global PB Std": None,
+                "Ring Final Mean": None,
+                "Ring Final Std": None,
+                "Ring PB Mean": None,
+                "Ring PB Std": None,
+                "VN Final Mean": None,
+                "VN Final Std": None,
+                "VN PB Mean": None,
+                "VN PB Std": None
+            }
+            for topology in topologies:                
+            #Setup
+                numIterations = 100
+            #bounds = Bounds()
+                bounds = Bounds()
+                functionBounds = bounds.getBounds(searchDomain)
+                    
+                s = Swarm(domainDict[searchDomain], functionBounds, 2, 
+                            num_particles=100, max_iter=numIterations, topology=topology)
+                
+                #run simulation
+                for _ in range(numIterations):
+                    s.updateSwarm()
+                
+                #get results
+                final_mean, final_std, pb_mean, pb_std = s.getResults(topology)
+                
+                #add results
+                results[f"{topology} Final Mean"] = final_mean
+                results[f"{topology} Final Std"] = final_std
+                results[f"{topology} PB Mean"] = pb_mean
+                results[f"{topology} PB Std"] = pb_std
+                
+            #append results
+            allResults.append(results)
 
-        all_results.append(results)
-
-    filename = os.path.join(f'dms_repro_evaluation.csv')
-
-    df = pd.DataFrame(all_results)
+    #csv file based on particle type
+    df = pd.DataFrame(allResults)
+    filename = f"dms-pso-Results.csv"
     df.to_csv(filename, index=False)
-    
-    print(f"Results written to {filename}")
+    print(f"Results saved to {filename}")
+    print("Open the files in Excel")
+
 
 domains = sys.argv[1:]
 #pType = sys.argv[1]

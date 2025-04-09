@@ -10,7 +10,7 @@ def on_select(option):
     label.destroy()
     global standardPSO
     standardPSO = "1"
-    global label_domain, combo_domain, label_particle_type, combo_particle_type, submit_button
+    global label_domain, combo_domain, label_particle_type, combo_particle_type, submit_button, label_topology, combo_topology
     if label_domain is not None:
             label_domain.destroy()
     if combo_domain is not None:
@@ -21,6 +21,10 @@ def on_select(option):
         combo_particle_type.destroy()
     if submit_button is not None:
         submit_button.destroy()
+    if label_topology is not None:
+        label_topology.destroy()
+    if combo_topology is not None:
+        combo_topology.destroy()
     ###
     search_domains = [
         "Sphere",
@@ -58,6 +62,9 @@ def on_select(option):
 
     # if visualise search domain is selected
     if option == 0:
+
+        topologies = ["Global", "Ring", "VN"]
+
         # Label for search domain
         label_domain = tk.Label(root, text="Choose a Search Domain:", font=("Arial", 12))
         label_domain.pack(pady=10)
@@ -66,16 +73,26 @@ def on_select(option):
         combo_domain = ttk.Combobox(root, values=search_domains)
         combo_domain.pack(pady=10)
 
+        #Combobox and label for topology
+        label_topology = tk.Label(root, text="Choose a Topology:", font=("Arial", 12))
+        label_topology.pack(pady=10)
+
+        combo_topology = ttk.Combobox(root, values=topologies)
+        combo_topology.pack(pady=10)
+
         # Submit button
         submit_button = tk.Button(root, text="Submit", command=pass_domain, width=20)
         submit_button.pack(pady=20)
-    else:
+    elif option == 1:
         subprocess.run(["python", "evaluate.py"] + search_domains)
-
+    else: 
+        subprocess.run(["python", "reportResults.py"] + search_domains)
 # passes selected domain to visualise to searchDomain.py
 def pass_domain():
     selected_value = combo_domain.get()
-    subprocess.run(["python", "visualise.py", selected_value] + search_domains)
+    topology = combo_topology.get()
+    subprocess.run(["python", "visualise.py", selected_value, topology] + search_domains)
+    #print(f"Selected: {selected_value}\nParticle Type: {selected_particle_type}")
 
 # Create main window
 root = tk.Tk()
@@ -87,18 +104,22 @@ label = tk.Label(root, text="Choose an option:", font=("Arial", 12))
 label.pack(pady=10)
 
 # Buttons for options
-btn1 = tk.Button(root, text="Visualise Standard PSO", command=lambda: on_select(0), width=25)
+btn1 = tk.Button(root, text="Visualise DMS-PSO", command=lambda: on_select(0), width=25)
 btn1.pack(pady=5)
 
-btn2 = tk.Button(root, text="Run Standard PSO on all Search Domains", command=lambda: on_select(1), width=40)
+btn2 = tk.Button(root, text="Run DMS-PSO on all Search Domains", command=lambda: on_select(1), width=40)
 btn2.pack(pady=5)
+
+btn3 = tk.Button(root, text="Run DMS-PSO on all Search Domains 50 times", command=lambda: on_select(2), width=25)
+btn3.pack(pady=5)
 
 label_domain = None
 combo_domain = None
 label_particle_type = None
 combo_particle_type = None
 submit_button = None
-
+label_topology = None
+combo_topology = None
 # Run the UI
 root.mainloop()
     

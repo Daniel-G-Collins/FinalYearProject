@@ -9,56 +9,56 @@ class Particle:
         self.ymin = functionBounds[2]
         self.ymax = functionBounds[3]
         
-        #Initial position within bounds
+        # Initial position within bounds
         self.position = np.array([
             uniform(self.xmin, self.xmax),
             uniform(self.ymin, self.ymax)
         ])
         
-        #Velocity
+        # Velocity
         self.velocity = np.array([
             uniform(self.xmin/2, self.xmax/2),
             uniform(self.ymin/2, self.ymax/2)
         ])
         
         self.vmax = np.array([
-            (self.xmax - self.xmin) * 0.2,  # e.g., 10% of world width
-            (self.ymax - self.ymin) * 0.2   # e.g., 10% of world height
+            (self.xmax - self.xmin) * 0.2,  # e.g., 20% of world width
+            (self.ymax - self.ymin) * 0.2   # e.g., 20% of world height
         ])
-        #best positions
+        # Best positions
         self.personal_best_position = self.position.copy()
         self.personal_best_fitness = float('inf')
         
-        #search domain lambda
+        # Search domain lambda
         self.evalPosition = evalPosition
         self.subswarm_color = 'Null'
         
-    def update_position(self, global_best, w=.72984, c1=2.05, c2=2.05):
+    def update_position(self, neighborhood_best, w=.72984, c1=.75, c2=.75):
         """
         Update particle position and velocity using PSO equations
         with strict bounds checking and improved boundary handling
         """
-        #random
-        r1 = np.random.rand(2)
-        r2 = np.random.rand(2)
+        # Random coefficients
+        r1 = np.random.rand(1)
+        r2 = np.random.rand(1)
         
-        #Cognitive component (personal best influence)
+        # Cognitive component (personal best influence)
         cognitive = c1 * r1 * (self.personal_best_position - self.position)
         
-        #Social component (global best influence)
-        social = c2 * r2 * (global_best - self.position)
+        # Social component (neighborhood best influence)
+        social = c2 * r2 * (neighborhood_best - self.position)
         
-        #Update velocity (inertia*v + cognitive + social)
+        # Update velocity (inertia*v + cognitive + social)
         self.velocity = (w * self.velocity + cognitive + social)
         
-        #clip the velocity
+        # Clip the velocity
         self.velocity = np.clip(self.velocity, -self.vmax, self.vmax)
         
-        # new position
+        # New position
         new_position = self.position + self.velocity
         
-        for i in range(2): #2dimensions
-            # If out of bounds,bounce back
+        for i in range(2): # 2 dimensions
+            # If out of bounds, bounce back
             if new_position[i] < (self.xmin if i == 0 else self.ymin):
                 new_position[i] = self.xmin if i == 0 else self.ymin
                 self.velocity[i] = -self.velocity[i] * 0.5 

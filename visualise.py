@@ -7,9 +7,9 @@ from bounds import Bounds
 from matplotlib.animation import FuncAnimation
 import matplotlib.colors as colors
 
-def main(selected_domain, domain_dict, functionBounds):
+def main(selected_domain, domain_dict, functionBounds, topology):
     ###
-    numIterations = 50
+    numIterations = 100
     x_min, x_max = functionBounds[0], functionBounds[1]
     y_min, y_max = functionBounds[2], functionBounds[3]
     #print(f"Bounds: {x_min}, {x_max}, {y_min}, {y_max}")
@@ -34,6 +34,7 @@ def main(selected_domain, domain_dict, functionBounds):
         dim=2,  #dimension is used later 
         num_particles=100, 
         max_iter=numIterations,
+        topology=topology
     )
 
     #starting scatter plot with colors
@@ -64,21 +65,22 @@ def main(selected_domain, domain_dict, functionBounds):
 
         return scat
 
-    ani = FuncAnimation(fig, update, frames=numIterations, interval=1000, blit=False, repeat=False)
+    ani = FuncAnimation(fig, update, frames=numIterations, interval=200, blit=False, repeat=False)
     fig.colorbar(surf)
     plt.show()
 
 if len(sys.argv) > 1:
     selected_domain = sys.argv[1]
     print(f"Received domain: {selected_domain}")
+    topology = sys.argv[2]
     
-    domain_dict = searchDomain.calc_dict(sys.argv[2:])
+    domain_dict = searchDomain.calc_dict(sys.argv[3:])
     bounds = Bounds()
     functionBounds = bounds.getBounds(selected_domain)
     
     if selected_domain in domain_dict:
         print(f"Plotting {selected_domain} function.")
-        main(selected_domain, domain_dict, functionBounds)
+        main(selected_domain, domain_dict, functionBounds, topology)
     else:
         print(f"Error: Domain '{selected_domain}' not found in the dictionary.")
 else:

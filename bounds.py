@@ -37,4 +37,5 @@ class Bounds:
         }
 
     def getBounds(self, functionName):
+        print(f"LENGHT: {len(self.bounds_dict)}")
         return self.bounds_dict.get(functionName)
