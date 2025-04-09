@@ -73,7 +73,7 @@ def on_select(option):
         label_domain = tk.Label(root, text="Choose a Search Domain:", font=("Arial", 12))
         label_domain.pack(pady=10)
 
-        # Combobox for search domain
+        #Combobox for search domain
         combo_domain = ttk.Combobox(root, values=search_domains)
         combo_domain.pack(pady=10)
 
@@ -84,16 +84,16 @@ def on_select(option):
         combo_topology = ttk.Combobox(root, values=topologies)
         combo_topology.pack(pady=10)
 
-        # Label for particle type
+        #Label for particle type
         label_particle_type = tk.Label(root, text="Choose a Swarm Type:", font=("Arial", 12))
         label_particle_type.pack(pady=10)
       
-        # Combobox for particle type
+        #Combobox for particle type
         combo_particle_type = ttk.Combobox(root, values=swarmTypes)
         combo_particle_type.current(0)  # Set default selection to "Standard PSO"
         combo_particle_type.pack(pady=10)
 
-        # Submit button
+        #Submit button
         submit_button = tk.Button(root, text="Submit", command=pass_domain, width=20)
         submit_button.pack(pady=20)
     elif option == 1:
