@@ -10,7 +10,7 @@ def on_select(option):
     label.destroy()
     global standardPSO
     standardPSO = "1"
-    global label_domain, combo_domain, label_particle_type, combo_particle_type, submit_button, label_topology, combo_topology
+    global label_domain, combo_domain, label_particle_type, combo_particle_type, submit_button, label_topology, combo_topology, label_report, combo_report
     if label_domain is not None:
         label_domain.destroy()
     if combo_domain is not None:
@@ -25,6 +25,10 @@ def on_select(option):
         label_topology.destroy()
     if combo_topology is not None:
         combo_topology.destroy()
+    if label_report is not None:
+        label_report.destroy()
+    if combo_report is not None:
+        combo_report.destroy()
     ###
     search_domains = [
         "Sphere",
@@ -62,7 +66,7 @@ def on_select(option):
 
     # if visualise search domain is selected
     if option == 0:
-        swarmTypes = ["Standard", "Standard With Dampening Factor"]
+        swarmTypes = ["Standard", "Constricted"]
         topologies = ["Global", "Ring", "VN"]
 
         # Label for search domain
@@ -92,8 +96,10 @@ def on_select(option):
         # Submit button
         submit_button = tk.Button(root, text="Submit", command=pass_domain, width=20)
         submit_button.pack(pady=20)
-    else:
+    elif option == 1:
         subprocess.run(["python", "evaluate.py"] + search_domains)  # Run script_b.py
+    else:
+        subprocess.run(["python", "reportEvaluate.py"] + search_domains)
 
 # passes selected domain to visualise to searchDomain.py
 def pass_domain():
@@ -110,17 +116,20 @@ root.geometry("500x500")
 
 # Label
 label = tk.Label(root, text="Choose an option:", font=("Arial", 12))
+
 label.pack(pady=10)
 
-swarm_label = tk.Label(root, text="Choose a Swarm Type:", font=("Arial", 12))
-swarm_label.pack(pady=10)
 
 # Buttons for options
-btn1 = tk.Button(root, text="Visualise Standard PSO", command=lambda: on_select(0), width=25)
+btn1 = tk.Button(root, text="Visualise SPSO or CPSO", command=lambda: on_select(0), width=25)
 btn1.pack(pady=5)
 
-btn2 = tk.Button(root, text="Run Standard PSO on all Search Domains", command=lambda: on_select(1), width=40)
+btn2 = tk.Button(root, text="Run SPSO and CSPO with all configs once", command=lambda: on_select(1), width=40)
 btn2.pack(pady=5)
+
+btn3 = tk.Button(root, text="Run SPSO and CSPSO 50 times on Each", command=lambda: on_select(2), width=40)
+btn3.pack(pady=5)
+
 
 label_domain = None
 combo_domain = None
@@ -129,6 +138,8 @@ combo_particle_type = None
 submit_button = None
 label_topology = None
 combo_topology = None
+label_report = None
+combo_report = None
 
 # Run the UI
 root.mainloop()

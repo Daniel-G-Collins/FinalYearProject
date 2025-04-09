@@ -10,7 +10,7 @@ class swarm:
         self.pType = pType
         self.topology = topology
         match pType:
-            case "StandardWithDampeningFactor":
+            case "Constricted":
                 self.particles = [dParticle(self.evalPosition, self.selected_domain, numIterations) for i in range(numParticles)]
             case "Standard":
                 self.particles = [particle(self.evalPosition, self.selected_domain) for i in range(numParticles)]

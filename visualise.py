@@ -46,7 +46,7 @@ if len(sys.argv) > 1:
 
         print(f"ptype:{pType}")
         #numParticles must be a perfect square for VN topology !!!!!!!!!!!!!!!!!!!!!!!!
-        swarm = swarm(domain_dict[selected_domain], selected_domain, topology, numParticles=100, numIterations=numIterations, pType=pType)
+        swarm = swarm(domain_dict[selected_domain], selected_domain, topology, numParticles=49, numIterations=numIterations, pType=pType)
         scat = ax.scatter(
             [p.xpos for p in swarm.particles],
             [p.ypos for p in swarm.particles],
@@ -69,7 +69,7 @@ if len(sys.argv) > 1:
 
             return scat
 
-        ani = FuncAnimation(fig, update, frames=numIterations, interval=1000, blit=False, repeat=False)
+        ani = FuncAnimation(fig, update, frames=numIterations, interval=500, blit=False, repeat=False)
         fig.colorbar(surf)
         plt.show()
         

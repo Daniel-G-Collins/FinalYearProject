@@ -61,9 +61,9 @@ class particle:
         #new Vel = interia * old vel + c1 * rand() * (pbest - current) + c2 * rand() * (gbest - current)
         r1 = uniform(0,1)
         r2 = uniform(0,1)
-        inertia = 0.2
-        c1 = 2
-        c2 = 2
+        inertia = 0.7219
+        c1 = .725
+        c2 = .725
 
         self.xv = inertia * self.xv + c1 * r1 * (self.bestX - self.xpos) + c2 * r2 * (globalBestX - self.xpos)
         self.yv = inertia * self.yv + c1 * r1 * (self.bestY - self.ypos) + c2 * r2 * (globalBestY - self.ypos)

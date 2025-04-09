@@ -7,7 +7,7 @@ import pandas as pd
 
 def evaluate(domains, domainDict):
     #allResults = []
-    types = "Standard" , "StandardWithDampeningFactor"
+    types = "Standard" , "Constricted"
     topologies = "Global", "Ring", "VN"
     for type in types:
         allResults = []
@@ -32,7 +32,7 @@ def evaluate(domains, domainDict):
                     numIterations = 100
                 #bounds = Bounds()
                     
-                    s = swarm(domainDict[searchDomain], searchDomain, topology, numParticles=100, numIterations=numIterations, pType=type)
+                    s = swarm(domainDict[searchDomain], searchDomain, topology, numParticles=49, numIterations=numIterations, pType=type)
                     
                     #run simulation
                     for _ in range(numIterations):

@@ -16,8 +16,8 @@ class dParticle(particle):
         r1 = uniform(0,1)
         r2 = uniform(0,1)
         #new Vel = ( interia * old vel + c1 * rand() * (pbest - current) + c2 * rand() * (gbest - current) ) * (1 - currentIteration/MacxIterations)
-        self.xv = (constrictionFactor * self.xv + c1 * r1 * (self.bestX - self.xpos) + c2 * r2 * (globalBestX - self.xpos)) * (1 - self.iteration/self.numIterations)
-        self.yv = (constrictionFactor * self.yv + c1 * r1 * (self.bestY - self.ypos) + c2 * r2 * (globalBestY - self.ypos)) * (1 - self.iteration/self.numIterations)
+        self.xv = constrictionFactor * (self.xv + c1 * r1 * (self.bestX - self.xpos) + c2 * r2 * (globalBestX - self.xpos)) 
+        self.yv = constrictionFactor * (self.yv + c1 * r1 * (self.bestY - self.ypos) + c2 * r2 * (globalBestY - self.ypos))
         #print(f"gbesyt: {globalBest}")
 
         self.iteration += 1
